@@ -17,15 +17,15 @@ import Header from "../parts/Header";
 import Home from "../pages/Home";
 
 const App = () => {
-	// openWeather
-	// 	.get("/forecast", {
-	// 		params: {
-	// 			id: "524901",
-	// 		},
-	// 	})
-	// 	.then((response) => {
-	// 		console.log(response);
-	// 	});
+	openWeather
+		.get("/forecast", {
+			params: {
+				id: "524901",
+			},
+		})
+		.then((response) => {
+			console.log(response);
+		});
 
 	return (
 		<div className="bg-gray-300 h-screen">
