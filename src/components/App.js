@@ -1,14 +1,11 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 // Assets
 import "../assets/App.css";
 
-// API
-import openWeather from "../apis/openWeather";
-
-// Utils
-import history from "../history";
+// Contexts
+import { LocationStore } from "../contexts/LocationContext";
 
 // Components
 import Header from "../parts/Header";
@@ -17,24 +14,16 @@ import Header from "../parts/Header";
 import Home from "../pages/Home";
 
 const App = () => {
-	openWeather
-		.get("/forecast", {
-			params: {
-				id: "524901",
-			},
-		})
-		.then((response) => {
-			console.log(response);
-		});
-
 	return (
-		<div className="bg-gray-300 h-screen">
-			<Router history={history}>
+		<div className="bg-blue-100 h-screen">
+			<LocationStore>
 				<Header />
-				<Routes>
-					<Route path="/" component={Home} />
-				</Routes>
-			</Router>
+				<div className="container xl:px-8 md:px-6 sm:px-3 px-2 mt-4">
+					<Routes>
+						<Route path="/" exact element={<Home />} />
+					</Routes>
+				</div>
+			</LocationStore>
 		</div>
 	);
 };
