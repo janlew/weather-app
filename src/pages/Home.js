@@ -1,39 +1,63 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import LocationContext from "../contexts/LocationContext";
-import openWeather from "../apis/openWeather";
+import openWeather from "../services/apis/openWeather";
+import Search from "../components/Search";
+import WeatherStatus from "../components/WeatherStatus";
+import Background from "../components/Background";
+import SearchResult from "../components/SearchResult";
 
 const Home = () => {
 	const context = useContext(LocationContext);
-	const [timezone, setTimezone] = useState("");
 	const [temperature, setTemperature] = useState(null);
+	const [weatherIcon, setWeatherIcon] = useState(null);
+	const [weatherType, setWeatherType] = useState(null);
+	const [searchResult, setSearchResult] = useState(null);
 
 	useEffect(() => {
 		openWeather
-			.get("onecall", {
+			.get("weather", {
 				params: {
 					lat: context.location.coords.latitude,
 					lon: context.location.coords.longitude,
 				},
 			})
 			.then((response) => {
-				setTimezone(response.data.timezone);
-				setTemperature(response.data.current.temp);
-				console.log(response.data);
+				setTemperature(response.data.main.temp);
+				setWeatherIcon(response.data.weather[0].icon);
+				setWeatherType(response.data.weather[0].main);
+				context.onCityChange(response.data.name);
+				console.log(response);
 			});
 	}, []);
 
-	console.log("Timezone: ", timezone);
+	const onSearch = (searchValue) => {
+		if (searchValue) {
+			openWeather
+				.get("weather", {
+					params: {
+						q: searchValue,
+					},
+				})
+				.then((response) => {
+					setSearchResult(response.data);
+				});
+		}
+	};
+
 	return (
-		<div className="flex justify-start">
-			<div className="bg-gray-100 border-2 border-blue-400 inline-block px-3 py-2 rounded-md shadow-sm">
-				<span className="font-serif">
-					{timezone && temperature
-						? `${timezone}: ${temperature}°C`
-						: "Loading..."}
-				</span>
+		<>
+			{/* <Background type={weatherType} /> */}
+			<div className="flex justify-between items-start relative z-10">
+				<Search onSearch={onSearch} />
+				<WeatherStatus
+					location={context.city}
+					temperature={temperature}
+					weatherIcon={weatherIcon}
+				/>
 			</div>
-		</div>
+			<SearchResult result={searchResult} />
+		</>
 	);
 };
 

@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 
+import Loader from "../components/Loader";
+
 const LocationContext = createContext(null);
 
 export const LocationStore = ({ children }) => {
@@ -18,6 +20,10 @@ export const LocationStore = ({ children }) => {
 		setState({ ...state, location });
 	};
 
+	const onCityChange = (city) => {
+		setState({ ...state, city });
+	};
+
 	if (!state.location) {
 		return (
 			<div className="bg-blue-100 h-screen flex justify-center items-center">
@@ -25,22 +31,16 @@ export const LocationStore = ({ children }) => {
 					<h4 className="text-gray-900 mb-5 font-mono">
 						Allow location access to proceed
 					</h4>
-					<div
-						className="
-						animate-spin
-						rounded-full
-						h-32
-						w-32
-						border-t-2 border-b-2 border-purple-500
-					"
-					></div>
+					<Loader size="32" />
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<LocationContext.Provider value={{ ...state, onLocationChange }}>
+		<LocationContext.Provider
+			value={{ ...state, onLocationChange, onCityChange }}
+		>
 			{children}
 		</LocationContext.Provider>
 	);
